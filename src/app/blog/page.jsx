@@ -2,39 +2,43 @@ import styles from './blog.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default function Blog() {
+async function getData() {
+    const res = await fetch('http://localhost:3000/api/posts', {
+        next: {
+            revalidate: 10,
+        },
+    });
+    if (!res.ok) {
+        throw new Error('Failed to fetch data');
+    }
+    return res.json();
+}
+
+export default async function Blog() {
+    const posts = await getData();
     return (
-        <div className={styles.container}>
-            <Link href={'/blog/1'} className={styles.container} key={'1'}>
-                <div className={styles.container}>
-                    <Image
-                        src={'/apps.jpg'}
-                        alt={'image'}
-                        width={400}
-                        height={250}
-                        className={styles.image}
-                    />
-                </div>
-                <div className={styles.content}>
-                    <h1 className={styles.title}>Title</h1>
-                    <p className={styles.desc}>Description</p>
-                </div>
-            </Link>
-            <Link href={'/blog/2'} className={styles.container} key={'1'}>
-                <div className={styles.container}>
-                    <Image
-                        src={'/apps.jpg'}
-                        alt={'image'}
-                        width={400}
-                        height={250}
-                        className={styles.image}
-                    />
-                </div>
-                <div className={styles.content}>
-                    <h1 className={styles.title}>Title</h1>
-                    <p className={styles.desc}>Description</p>
-                </div>
-            </Link>
+        <div className={styles.mainContainer}>
+            {posts.map((post) => (
+                <Link
+                    href={'/blog/' + post._id}
+                    className={styles.container}
+                    key={post._id}
+                >
+                    <div className={styles.imageContainer}>
+                        <Image
+                            src={post.img}
+                            alt={'image'}
+                            width={400}
+                            height={250}
+                            className={styles.image}
+                        />
+                    </div>
+                    <div className={styles.content}>
+                        <h1 className={styles.title}>{post.title}</h1>
+                        <p className={styles.desc}>{post.content}</p>
+                    </div>
+                </Link>
+            ))}
         </div>
     );
 }
