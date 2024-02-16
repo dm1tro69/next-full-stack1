@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import styles from './navbar.module.css';
+import DarckModeToggle from '../DarckModeToggle/DarckModeToggle';
 
 const links = [
     {
@@ -43,6 +44,7 @@ export default function Navbar() {
                 MyApp
             </Link>
             <div className={styles.links}>
+                <DarckModeToggle />
                 {links.map((link) => (
                     <Link key={link.id} href={link.url}>
                         {link.title}
